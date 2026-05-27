@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 40" width="160" height="40" fill="none">
+  <style>
+    .brand-text {
+      fill: #111827;
+    }
+  </style>
+  
+  <!-- Brand Icon -->
+  <g transform="translate(4, 4)">
+    <!-- Branch line 1 -->
+    <path d="M12 6V26" stroke="url(#gitGrad)" stroke-width="3" stroke-linecap="round"/>
+    <!-- Branch line 2 (curved) -->
+    <path d="M12 18C16 18 22 17 22 10" stroke="url(#gitGrad)" stroke-width="3" stroke-linecap="round"/>
+    <!-- Checkmark on the branch -->
+    <path d="M18 6L21 9L27 3" stroke="#10B981" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Node circles -->
+    <circle cx="12" cy="26" r="3.5" fill="#3B82F6" stroke="#ffffff" stroke-width="2"/>
+    <circle cx="12" cy="10" r="3.5" fill="#3B82F6" stroke="#ffffff" stroke-width="2"/>
+  </g>
+  
+  <!-- Brand Name -->
+  <text x="42" y="26" class="brand-text" font-family="system-ui, -apple-system, sans-serif" font-weight="700" font-size="18" letter-spacing="-0.5px">GitTest</text>
+  
+  <!-- AI Badge -->
+  <rect x="114" y="9" width="24" height="18" rx="5" fill="url(#aiGrad)"/>
+  <text x="120" y="22" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="10" fill="#ffffff" letter-spacing="0.5px">AI</text>
+  
+  <!-- Gradients -->
+  <defs>
+    <linearGradient id="gitGrad" x1="12" y1="6" x2="22" y2="26" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <linearGradient id="aiGrad" x1="114" y1="9" x2="138" y2="27" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+</svg>
