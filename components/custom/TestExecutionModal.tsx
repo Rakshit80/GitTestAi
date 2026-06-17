@@ -76,10 +76,12 @@ export default function TestExecutionModal({
   const [copied, setCopied] = useState(false);
 
   const terminalRef = useRef<HTMLDivElement>(null);
+  const wasOpenRef = useRef(false);
 
   // Initialize states when testCases change or modal opens
   useEffect(() => {
-    if (isOpen && testCases.length > 0) {
+    if (isOpen && !wasOpenRef.current && testCases.length > 0) {
+      wasOpenRef.current = true;
       const initial: Record<number, RunResult> = {};
       testCases.forEach((tc) => {
         const tcStatus = (tc as any).status;
@@ -108,6 +110,8 @@ export default function TestExecutionModal({
       // If even one doesn't have a script, default to "generate" mode.
       const hasMissingScript = testCases.some(tc => !tc.browserbaseScript);
       setExecutionMode(hasMissingScript ? "generate" : "cache");
+    } else if (!isOpen) {
+      wasOpenRef.current = false;
     }
   }, [isOpen, testCases, repository]);
 
