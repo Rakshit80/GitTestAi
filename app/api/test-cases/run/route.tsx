@@ -59,9 +59,12 @@ async function readGithubFile({
 export async function POST(req: NextRequest) {
   let userRecordObj: any = null;
   let costCharged = 0;
+  let parsedTestCaseId: any = null;
+  const logs: string[] = [];
   try {
     const body = await req.json();
     const { testCaseId, baseUrl, mode = "generate", customPrompt = "" } = body;
+    parsedTestCaseId = testCaseId;
 
     if (!testCaseId || !baseUrl) {
       return NextResponse.json(
@@ -273,7 +276,6 @@ Just return the executable code.
         .where(eq(TestCasesTable.id, testCase.id));
     }
 
-    const logs: string[] = [];
     const customConsole = {
       log: (...args: any[]) => logs.push(args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')),
       error: (...args: any[]) => logs.push('[ERROR] ' + args.map(a => typeof a === 'object' ? JSON.stringify(a) : String(a)).join(' ')),
@@ -296,6 +298,10 @@ Just return the executable code.
       browser = await chromium.connectOverCDP(session.connectUrl);
       const context = browser.contexts()[0];
       const page = context.pages()[0];
+
+      // Set optimized timeouts to prevent long hangs on failing actions
+      page.setDefaultTimeout(8000);
+      page.setDefaultNavigationTimeout(15000);
 
       // 6. Listen to Browser Console Events
       page.on("console", (msg: any) => {
@@ -388,12 +394,30 @@ Just return the executable code.
         console.error("Failed to refund credits:", refundErr);
       }
     }
+
+    if (parsedTestCaseId) {
+      try {
+        const errorLogs = [...logs, `[SYSTEM ERROR] ${error.message || String(error)}`];
+        await db
+          .update(TestCasesTable)
+          .set({
+            status: "failed",
+            logs: errorLogs,
+          })
+          .where(eq(TestCasesTable.id, parsedTestCaseId));
+      } catch (dbErr) {
+        console.error("Failed to update test case to failed state:", dbErr);
+      }
+    }
+
     return NextResponse.json(
       {
         success: false,
+        status: "failed",
         error: error.message || "An unexpected error occurred",
+        logs: [...logs, `[SYSTEM ERROR] ${error.message || String(error)}`],
       },
-      { status: 500 }
+      { status: 200 }
     );
   }
 }
